@@ -1,20 +1,25 @@
 using UnityEngine;
 
-class PlayerMovement: MonoBehaviour
+public class PlayerMovement: MonoBehaviour
 {
-    private void Update()
+   public void Update()
     {
-        CheckTouch();
+        Movement();
     }
 
-    void CheckTouch()
+    public void Movement()
     {
-        // Is the touch count more than zero?
-        if (Input.touchCount > 0)
+        // Keep looping until touchCount has been reached.
+        for (int i = 0; i < Input.touchCount; i++)
         {
-            // First finger touches the screen.
-            Touch touch = Input.GetTouch(0);
-            touch.phase = TouchPhase.Began;
+            // Camera set to the touch point.
+            Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[i].position);
+
+            // Move the character to the place of the touch.
+            transform.position = touchPos;
+
+            // Draws a line for debugging purposes.
+            Debug.DrawLine(Vector2.zero, touchPos, Color.green);
         }
     }
 }
