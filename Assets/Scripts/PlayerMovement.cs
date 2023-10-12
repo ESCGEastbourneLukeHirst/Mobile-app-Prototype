@@ -2,24 +2,56 @@ using UnityEngine;
 
 public class PlayerMovement: MonoBehaviour
 {
-   public void Update()
-    {
-        Movement();
-    }
+    // Character Controller
+    public CharacterController control;
+    // Animator
+    public Animator anim;
 
-    public void Movement()
+    // Joystick
+    public Joystick joystick;
+
+    // Speed variable
+    public float speed = 10f;
+
+    // Moves along the horizontal axis.
+    float horizontalMovement = 0f;
+
+    // Intially set jumping to false.
+    public bool jumping = false;
+
+    public void Update()
     {
-        // Keep looping until touchCount has been reached.
-        for (int i = 0; i < Input.touchCount; i++)
+        // Is the joystick moving more than .2f?
+        if (joystick.Horizontal >= .2f)
         {
-            // Camera set to the touch point.
-            Vector2 touchPos = Camera.main.ScreenToWorldPoint(Input.touches[i].position);
+            horizontalMovement = speed;
+        }
+        // Joystick isn't moving.
+        else if (joystick.Horizontal <= -.2f)
+        {
+            horizontalMovement = -speed;
+        }
+        else
+        {
+            horizontalMovement = 0f;
+        }
 
-            // Move the character to the place of the touch.
-            transform.position = touchPos;
+        // Handles jumping.
+        float verticalMovement = joystick.Vertical;
 
-            // Draws a line for debugging purposes.
-            Debug.DrawLine(Vector2.zero, touchPos, Color.green);
+        anim.SetFloat("speed", Mathf.Abs(horizontalMovement));
+
+        // Are we getting ready to jump?
+        if (verticalMovement >= .5f)
+        {
+            // Set jump to true, and play jump animation.
+            jumping = true;
+            anim.SetBool("jump", true);
+        }
+        else if (verticalMovement <= -.5f)
+        {
+            jumping = false;
+            anim.SetBool("jump", false);
         }
     }
 }
